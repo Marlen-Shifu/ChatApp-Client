@@ -62,9 +62,7 @@ public class Connection
                     new BufferedReader(
                             new InputStreamReader(System.in));
 
-            Log.d(LOG_TAG, "before");
             listenData();
-            Log.d(LOG_TAG, "after");
 
 
         } catch (IOException e) {
@@ -77,7 +75,6 @@ public class Connection
      */
     public void closeConnection()
     {
-        Log.d(LOG_TAG, "closestart");
         if (mSocket != null && !mSocket.isClosed()) {
             try {
                 mSocket.close();

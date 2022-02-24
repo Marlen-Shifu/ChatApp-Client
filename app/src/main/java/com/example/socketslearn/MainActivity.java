@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity
 {
     private Button mBtnOpen  = null;
     private Button mBtnSend  = null;
+    private Button mBtnLogin  = null;
     private Button mBtnClose = null;
     private EditText mEdit = null;
     public TextView text = null;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity
 
         mBtnOpen = (Button) findViewById(R.id.btn_open );
         mBtnSend = (Button) findViewById(R.id.btn_send );
+        mBtnLogin = (Button) findViewById(R.id.btn_login );
         mBtnClose = (Button) findViewById(R.id.btn_close);
         mEdit = (EditText) findViewById(R.id.edText);
         text = (TextView) findViewById(R.id.textView);
@@ -55,6 +57,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        mBtnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnLoginClick();
+            }
+        });
+
         mBtnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,6 +72,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void OnLoginClick()
+    {
+        String text;
+        text = mEdit.getText().toString();
+
+        SendData(
+                "{\"oper\": \"login\", " +
+                        "\"username\": \"" + text + "\"}"
+        );
+    }
 
     private void onOpenClick()
     {
@@ -116,6 +135,21 @@ public class MainActivity extends AppCompatActivity
     }
     private void onSendClick()
     {
+        String text;
+        text = mEdit.getText().toString();
+
+        String dataToSend = String.format("{" +
+                "\"oper\": \"send-message\", " +
+                "\"id\": \"3\", " +
+                "\"chat_id\": \"1\", " +
+                "\"text\": \"%s\"" +
+                "}", text);
+
+        SendData(dataToSend);
+    }
+
+    private void SendData(String data)
+    {
         if (mConnect == null) {
             Log.d(LOG_TAG, "Соединение не установлено");
         }  else {
@@ -124,12 +158,13 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     try {
-                        String text;
-                        text = mEdit.getText().toString();
+
 //                        if (text.trim().length() == 0)
 //                            text = "Test message";
                         // отправляем сообщение
-                        mConnect.sendData(text.getBytes());
+
+                        mConnect.sendData(data.getBytes());
+
                     } catch (Exception e) {
                         Log.e(LOG_TAG, e.getMessage());
                     }
@@ -137,6 +172,7 @@ public class MainActivity extends AppCompatActivity
             }).start();
         }
     }
+
     private void onCloseClick()
     {
         // Закрытие соединения
