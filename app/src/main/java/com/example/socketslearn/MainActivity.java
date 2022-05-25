@@ -2,15 +2,13 @@ package com.example.socketslearn;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.stream.Stream;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -35,7 +33,7 @@ public class MainActivity extends AppCompatActivity
 
         mBtnOpen = (Button) findViewById(R.id.btn_open );
         mBtnSend = (Button) findViewById(R.id.btn_send );
-        mBtnLogin = (Button) findViewById(R.id.btn_login );
+        mBtnLogin = (Button) findViewById(R.id.btn_login_page);
         mBtnClose = (Button) findViewById(R.id.btn_close);
         mEdit = (EditText) findViewById(R.id.edText);
         text = (TextView) findViewById(R.id.textView);
@@ -74,65 +72,17 @@ public class MainActivity extends AppCompatActivity
 
     private void OnLoginClick()
     {
-        String text;
-        text = mEdit.getText().toString();
-
-        SendData(
-                "{\"oper\": \"login\", " +
-                        "\"username\": \"" + text + "\"}"
-        );
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
     }
 
     private void onOpenClick()
     {
-        // Создание подключения
-        mConnect = new Connection("10.0.2.2", 5000, this);
-        // Открытие сокета в отдельном потоке
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mConnect.openConnection();
-                    // Разблокирование кнопок в UI потоке
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mBtnSend.setEnabled(true);
-                            mBtnClose.setEnabled(true);
-                        }
-                    });
-                    Log.d(LOG_TAG, "Соединение установлено");
-                    Log.d(LOG_TAG, "(mConnect != null) = "
-                            + (mConnect != null));
+        mConnect = Connection.getInstance();
 
-
-//                    new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            try {
-//
-//                                Log.d(LOG_TAG, "Слушаю входящие сообщения");
-//
-//                                mConnect.listenData();
-//
-//                            } catch (Exception e) {
-//                                Log.e(LOG_TAG, e.getMessage());
-//                                mConnect = null;
-//                            }
-//                        }
-//                    }).start();
-
-
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, e.getMessage());
-                    mConnect = null;
-                }
-            }
-        }).start();
-
-
-
+        mBtnSend.setEnabled(true);
+        mBtnClose.setEnabled(true);
     }
+
     private void onSendClick()
     {
         String text;

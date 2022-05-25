@@ -1,7 +1,13 @@
 package com.example.socketslearn;
 
+import android.content.Context;
+import android.util.JsonReader;
 import android.util.Log;
+import android.view.ViewParent;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -15,11 +21,11 @@ import java.util.stream.Stream;
 
 public class Connection
 {
+    private static Connection connection;
+
     private  Socket  mSocket = null;
     private  String  mHost   = null;
     private  int     mPort   = 0;
-
-    private MainActivity act = null;
 
     public final int BUFFER_SIZE = 2048;
 
@@ -33,11 +39,36 @@ public class Connection
 
     public Connection() {}
 
-    public Connection (final String host, final int port, MainActivity act)
+    public Connection (final String host, final int port)
     {
         this.mHost = host;
         this.mPort = port;
-        this.act = act;
+    }
+
+    public static Connection getInstance()
+    {
+        if (connection == null) {
+            connection = new Connection("10.0.2.2", 5000);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        connection.openConnection();
+
+                        Log.d(LOG_TAG, "Соединение установлено");
+                        Log.d(LOG_TAG, "(mConnect != null) = "
+                                + (connection != null));
+
+                    } catch (Exception e) {
+                        Log.e(LOG_TAG, e.getMessage());
+                        connection = null;
+                    }
+                }
+            }).start();
+        }
+
+        return connection;
     }
 
 //    public int input() throws IOException {
@@ -120,17 +151,13 @@ public class Connection
                             String inputLine;
 
                             inputLine = in.readLine();
+                            Log.d(LOG_TAG, "JJS");
 
-                            act.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    act.text.setText(inputLine);
+                            JSONObject jsonObject = new JSONObject(inputLine);
 
-                                }
-                            });
+                            Log.d(LOG_TAG, jsonObject.get("chats").toString());
+
                         }
-
-//                closeConnection(); // disconnect server
 
                     } catch (Exception e) {
                         Log.e(LOG_TAG, e.getMessage());
