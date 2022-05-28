@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
     private void onOpenClick()
     {
-        mConnect = Connection.getInstance();
+        mConnect = Connection.getInstance(getApplicationContext());
 
         mBtnSend.setEnabled(true);
         mBtnClose.setEnabled(true);

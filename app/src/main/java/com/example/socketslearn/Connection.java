@@ -37,16 +37,24 @@ public class Connection
 
     public BufferedReader in;
 
+    private Routing routing;
+
+    private static Context mContext;
+
     public Connection() {}
 
     public Connection (final String host, final int port)
     {
         this.mHost = host;
         this.mPort = port;
+
+        routing = Routing.GetInstance(mContext);
     }
 
-    public static Connection getInstance()
+    public static Connection getInstance(Context context)
     {
+        mContext = context;
+
         if (connection == null) {
             connection = new Connection("10.0.2.2", 5000);
 
@@ -151,11 +159,8 @@ public class Connection
                             String inputLine;
 
                             inputLine = in.readLine();
-                            Log.d(LOG_TAG, "JJS");
 
-                            JSONObject jsonObject = new JSONObject(inputLine);
-
-                            Log.d(LOG_TAG, jsonObject.get("chats").toString());
+                            routing.Route(inputLine);
 
                         }
 

@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mConnect = Connection.getInstance();
+        mConnect = Connection.getInstance(getApplicationContext());
 
         mBtnLogin = (Button) findViewById(R.id.btn_login);
         usernameInput = (EditText) findViewById(R.id.usernameInput);
@@ -82,7 +82,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
-
     }
 }
