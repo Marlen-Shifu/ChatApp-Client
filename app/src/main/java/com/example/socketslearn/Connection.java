@@ -160,6 +160,8 @@ public class Connection
 
                             inputLine = in.readLine();
 
+                            Log.d(LOG_TAG, inputLine);
+
                             routing.Route(inputLine);
 
                         }

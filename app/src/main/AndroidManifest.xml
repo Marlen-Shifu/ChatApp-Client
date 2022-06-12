@@ -12,8 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SocketsLearn">
-        <activity android:name=".ChatsPage.ChatsPageActivity"></activity>
-        <activity android:name=".LoginActivity" />
+
+        <activity android:name=".ChatActivity.ChatActivity"
+                    android:theme="@style/Theme.SocketsLearn.NoActionBar"/>
+
+        <activity android:name=".ChatsPage.ChatsPageActivity"
+                    android:label="Chats"/>
+        <activity android:name=".LoginActivity"
+                    android:label="Login"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

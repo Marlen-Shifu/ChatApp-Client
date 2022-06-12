@@ -3,10 +3,15 @@ package com.example.socketslearn;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
+import android.util.Log;
 
+import com.example.socketslearn.ChatActivity.ChatActivity;
 import com.example.socketslearn.ChatsPage.ChatsPageActivity;
 
 import org.json.JSONObject;
+
+import java.util.function.LongFunction;
 
 
 public class Routing {
@@ -37,14 +42,26 @@ public class Routing {
             {
                 Login(jsonObject.get("chats").toString());
             }
-        }
 
+            else if (jsonObject.get("oper").toString().equals("messages"))
+            {
+                Log.d(LOG_TAG, "MESSAGES");
+                Messages(jsonObject.get("messages").toString());
+            }
+        }
     }
 
     private void Login(String chatsData)
     {
         Intent i = new Intent(mContext, ChatsPageActivity.class);
         i.putExtra("chats_data", chatsData);
+        mContext.startActivity(i);
+    }
+
+    private void Messages(String messagesData)
+    {
+        Intent i = new Intent(mContext, ChatActivity.class);
+        i.putExtra("messages_data", messagesData);
         mContext.startActivity(i);
     }
 }
