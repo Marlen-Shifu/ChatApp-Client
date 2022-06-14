@@ -9,6 +9,7 @@ import android.util.Log;
 import com.example.socketslearn.ChatActivity.ChatActivity;
 import com.example.socketslearn.ChatsPage.ChatsPageActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.function.LongFunction;
@@ -45,8 +46,13 @@ public class Routing {
 
             else if (jsonObject.get("oper").toString().equals("messages"))
             {
-                Log.d(LOG_TAG, "MESSAGES");
                 Messages(jsonObject.get("messages").toString());
+            }
+
+            else if (jsonObject.get("oper").toString().equals("new_message"))
+            {
+                Log.d(LOG_TAG, "NEW_MESSAGE");
+                NewMessage(jsonObject.get("message").toString());
             }
         }
     }
@@ -63,5 +69,20 @@ public class Routing {
         Intent i = new Intent(mContext, ChatActivity.class);
         i.putExtra("messages_data", messagesData);
         mContext.startActivity(i);
+    }
+
+
+    private void NewMessage(String messageData) throws JSONException {
+        ChatActivity chat = ChatActivity.GetInstance();
+        chat.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    chat.NewMessageRecieved(messageData);
+                } catch (JSONException e) {
+                    Log.d(LOG_TAG, e.toString());
+                }
+            }
+        });
     }
 }

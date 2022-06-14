@@ -27,11 +27,26 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
     private String LOG_TAG = "SOCKET";
 
+    private MessageAdapter adapter;
+
+    private static ChatActivity chatActivity;
+
+
+    public static ChatActivity GetInstance()
+    {
+        if (chatActivity == null)
+            chatActivity = new ChatActivity();
+
+        return chatActivity;
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        chatActivity = this;
 
         backBtn = findViewById(R.id.back_btn);
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -49,9 +64,27 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
 
         RecyclerView recyclerView = findViewById(R.id.messages);
         // создаем адаптер
-        MessageAdapter adapter = new MessageAdapter(this, messages, this, "1");
+        adapter = new MessageAdapter(this, messages, this, "1");
         // устанавливаем для списка адаптер
         recyclerView.setAdapter(adapter);
+
+        findViewById(R.id.send_btn).setOnClickListener(view -> {
+            messages.add(new Message(5, "1", "Marlen", "QWERTYUIOP", "12:21"));
+            adapter.notifyItemInserted(messages.size() - 1);
+        });
+    }
+
+    public void NewMessageRecieved(String messageData) throws JSONException {
+        JSONObject message = new JSONObject(messageData);
+
+        messages.add(new Message(
+                message.getInt("id"),
+                message.getString("sender_id"),
+                message.getString("sender"),
+                message.getString("text"),
+                message.getString("send_time")));
+
+        adapter.notifyItemInserted(messages.size() - 1);
     }
 
     private void setInitialData() throws JSONException {
@@ -62,7 +95,6 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         {
             JSONObject message = messagesData.getJSONObject(i);
 
-            Log.d(LOG_TAG, message.toString());
 
             messages.add(new Message(
                     message.getInt("id"),

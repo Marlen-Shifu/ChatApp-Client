@@ -52,6 +52,7 @@
             />
 
         <Button
+            android:id="@+id/send_btn"
             android:layout_width="100dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
