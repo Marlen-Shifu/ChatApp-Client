@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.socketslearn.ChatsPage.Chat;
 import com.example.socketslearn.ChatsPage.ChatAdapter;
+import com.example.socketslearn.Connection;
 import com.example.socketslearn.R;
 
 import org.json.JSONArray;
@@ -30,6 +32,13 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     private MessageAdapter adapter;
 
     private static ChatActivity chatActivity;
+
+    private EditText editText;
+
+    private Connection mConnect;
+
+    private String userId = "1";
+    private int chatId;
 
 
     public static ChatActivity GetInstance()
@@ -56,6 +65,10 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
             }
         });
 
+        editText = findViewById(R.id.text);
+
+        mConnect = Connection.getInstance(GetInstance().getApplicationContext());
+
         try {
             setInitialData();
         } catch (JSONException e) {
@@ -69,8 +82,7 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
         recyclerView.setAdapter(adapter);
 
         findViewById(R.id.send_btn).setOnClickListener(view -> {
-            messages.add(new Message(5, "1", "Marlen", "QWERTYUIOP", "12:21"));
-            adapter.notifyItemInserted(messages.size() - 1);
+            SendNewMessage();
         });
     }
 
@@ -90,6 +102,8 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     private void setInitialData() throws JSONException {
         JSONArray messagesData = new JSONArray(getIntent().getStringExtra("messages_data"));
         Log.d(LOG_TAG, messagesData.toString());
+
+        chatId = (int) messagesData.getJSONObject(0).get("chat_id");
 
         for (int i = 0; i < messagesData.length(); i++)
         {
@@ -113,5 +127,33 @@ public class ChatActivity extends AppCompatActivity implements MessageAdapter.On
     @Override
     public void onMessageClick(int pos) {
 
+    }
+
+    private void SendNewMessage(){
+        String dataToSend = String.format("{" +
+                "\"oper\": \"send_message\", " +
+                "\"chat_id\": \"%s\"," +
+                "\"sender_id\": \"%s\"," +
+                "\"text\": \"%s\"" +
+                "}", chatId, userId, editText.getText().toString());
+
+        Log.d(LOG_TAG, dataToSend);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+//                        if (text.trim().length() == 0)
+//                            text = "Test message";
+                    // отправляем сообщение
+
+                    mConnect.sendData(dataToSend.getBytes());
+
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
+            }
+        }).start();
     }
 }

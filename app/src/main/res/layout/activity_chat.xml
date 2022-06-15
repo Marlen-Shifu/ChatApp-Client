@@ -47,6 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent" >
 
         <EditText
+            android:id="@+id/text"
             android:layout_width="290dp"
             android:layout_height="match_parent"
             />
